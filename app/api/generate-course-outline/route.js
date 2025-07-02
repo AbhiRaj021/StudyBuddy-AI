@@ -97,7 +97,6 @@ import { STUDY_MATERIAL_TABLE } from "@/configs/schema";
 import { db } from "@/configs/db";
 import { NextResponse } from "next/server";
 import { inngest } from "@/inngest/client";
-import res from "express/lib/response";
 
 // export async function POST(req) {
 //   try {
