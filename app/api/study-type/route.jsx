@@ -21,8 +21,8 @@ export async function POST(req) {
 
     // Fix case sensitivity issues by normalizing to lowercase for comparison
     const result = {
-      notes: notes,
-      flashcards: contentList?.find(item => item.type.toLowerCase() === 'flashcard')?.content || [],
+      notes: contentList?.find(item => item.type.toLowerCase() === 'notes')?.content || notes, // ✅ FIXED: Look for 'notes' type and fallback to CHAPTER_NOTES_TABLE
+      flashcards: contentList?.find(item => item.type.toLowerCase() === 'flashcards')?.content || [],
       quiz: contentList?.find(item => item.type.toLowerCase() === 'quiz')?.content || [],
       qa: contentList?.find(item => item.type.toLowerCase() === 'qa')?.content || [],
     };
@@ -33,6 +33,16 @@ export async function POST(req) {
   }
   else if (studyType === 'notes')
   {
+    // Check both STUDY_TYPE_CONTENT_TABLE and CHAPTER_NOTES_TABLE for notes
+    const notesFromContent = await db.select().from(STUDY_TYPE_CONTENT_TABLE)
+      .where(and(eq(STUDY_TYPE_CONTENT_TABLE?.courseId, courseId),
+      eq(STUDY_TYPE_CONTENT_TABLE?.type, 'notes')));
+    
+    if (notesFromContent.length > 0) {
+      return NextResponse.json({notes: notesFromContent[0].content});
+    }
+    
+    // Fallback to chapter notes
     const notes = await db.select().from(CHAPTER_NOTES_TABLE)
     .where(eq(CHAPTER_NOTES_TABLE?.courseId, courseId));
 

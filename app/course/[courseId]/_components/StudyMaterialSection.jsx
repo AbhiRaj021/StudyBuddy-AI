@@ -157,7 +157,7 @@ function StudyMaterialSection({ courseId, course }) {
 
       // Check if result has all expected properties
       if (result?.data?.result) {
-        console.log("Notes:", result.data.result.notes?.length || 0)
+        console.log("notes:", result.data.result.notes?.length || 0)
         console.log("Flashcards:", result.data.result.flashcards?.length || 0)
         console.log("Quiz:", result.data.result.quiz?.length || 0)
         console.log("QA:", result.data.result.qa?.length || 0)

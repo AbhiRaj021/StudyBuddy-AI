@@ -86,7 +86,7 @@ function MaterialCardItem({ item, studyTypeContent, course, refreshData }) {
 
     const result = await axios.post("/api/study-type-content", {
       courseId: course?.courseId,
-      type: item.name,
+      type: item.type,
       chapters: chapters,
     })
     setLoading(false)

@@ -1,63 +1,3 @@
-// import { db } from "@/configs/db";
-// import { inngest } from "./client";
-// import { USER_TABLE } from "@/configs/schema";
-// import { eq } from "drizzle-orm";
-
-// export const helloWorld = inngest.createFunction(
-//   { id: "hello-world" },
-//   { event: "test/hello.world" },
-//   async ({ event, step }) => {
-//     await step.sleep("wait-a-moment", "1s");
-//     return { message: `Hello ${event.data.email}!` };
-//   }
-// );
-
-// export const CreateNewUser = inngest.createFunction(
-//   { id: "create-user" },
-//   { event: "user.create" },
-//   async ({ event, step }) => {
-//     const { user } = event.data;
-//     //Get Event Data
-
-//     const result = await step.run(
-//       "Check User and create New if not in DB",
-//       async () => {
-//         try {
-//           // Check if the user already exists in the database
-//           const existingUser = await db
-//             .select()
-//             .from(USER_TABLE)
-//             .where(eq(USER_TABLE.email, user?.primaryEmailAddress?.emailAddress));
-
-//           if (existingUser.length === 0) {
-//             // Insert the new user into the database
-//             const userResponse = await db
-//               .insert(USER_TABLE)
-//               .values({
-//                 name: user?.fullName,
-//                 email: user?.primaryEmailAddress?.emailAddress,
-//               })
-//               .returning({ id: USER_TABLE.id });
-//             return userResponse;
-//           } else {
-//             return existingUser;
-//           }
-//         } catch (error) {
-//           console.error("Error in user creation:", error);
-//           throw new Error("Database operation failed");
-//         }
-//       }
-//     );
-
-//     // Placeholder for further steps, such as sending welcome emails
-//     // await step.run("Send Welcome Email", async () => {
-//     //   // Send welcome email logic
-//     // });
-
-//     return { status: 'Success', data: result };
-//   }
-// );
-
 import { db } from "@/configs/db";
 import { inngest } from "./client";
 import {
@@ -209,7 +149,7 @@ export const GenerateStudyTypeContent = inngest.createFunction(
   { event: "studyType.content" },
 
   async ({ event, step }) => {
-    const { studuType, prompt, courseId, recordId } = event.data;
+    const { studyType, prompt, courseId, recordId } = event.data;
 
     const AIResult = await step.run(
       "Generating Flashcard using AI",
@@ -223,12 +163,14 @@ export const GenerateStudyTypeContent = inngest.createFunction(
         // return AIResult;
 
         let result;
-        if(studuType === "Flashcard"){
+        if (studyType === "Flashcard") {
           result = await GenerateStudyTypeContentAiModel.sendMessage(prompt);
-        } else if(studuType === "Quiz"){
+        } else if (studyType === "Quiz") {
           result = await GenerateQuizAiModel.sendMessage(prompt);
-        } else if(studuType === "QA"){
+        } else if (studyType === "QA") {
           result = await GenerateQuestionAnswerAiModel.sendMessage(prompt);
+        } else {
+          throw new Error(`Invalid studyType: ${studyType}`);
         }
 
         const AIResult = JSON.parse(result.response.text());
