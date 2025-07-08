@@ -152,7 +152,7 @@ export const GenerateStudyTypeContent = inngest.createFunction(
     const { studyType, prompt, courseId, recordId } = event.data;
 
     const AIResult = await step.run(
-      "Generating Flashcard using AI",
+      "Generating content using AI",
       async () => {
         // const result = 
         // studuType === "Flashcard" ?
@@ -163,7 +163,9 @@ export const GenerateStudyTypeContent = inngest.createFunction(
         // return AIResult;
 
         let result;
-        if (studyType === "Flashcard") {
+        if(studyType === "Notes") {
+          result = await generateNotesAiModel.sendMessage(prompt);
+        } else if (studyType === "Flashcard") {
           result = await GenerateStudyTypeContentAiModel.sendMessage(prompt);
         } else if (studyType === "Quiz") {
           result = await GenerateQuizAiModel.sendMessage(prompt);

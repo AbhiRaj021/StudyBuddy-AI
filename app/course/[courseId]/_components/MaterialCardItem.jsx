@@ -84,16 +84,27 @@ function MaterialCardItem({ item, studyTypeContent, course, refreshData }) {
     })
     console.log(chapters)
 
+    try {
     const result = await axios.post("/api/study-type-content", {
       courseId: course?.courseId,
       type: item.type,
       chapters: chapters,
     })
+     console.log("Content generation result:", result)
+    
+    // Wait a moment for the Inngest function to complete
+    setTimeout(() => {
+      refreshData(true)
+      toast("Your Content is ready to view")
+    }, 3000) // Give Inngest time to process and update the database
+    
+  } catch (error) {
+    console.error("Error generating content:", error)
+    toast("Error generating content")
+  } finally {
     setLoading(false)
-    console.log(result)
-    refreshData(true)
-    toast("Your Content is ready to view")
   }
+}
 
   const isContentReady = studyTypeContent && studyTypeContent[item.type] && studyTypeContent[item.type]?.length > 0
   const contentCount = studyTypeContent?.[item.type]?.length || 0
