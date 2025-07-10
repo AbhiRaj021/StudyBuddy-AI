@@ -117,8 +117,33 @@ function FlashCards() {
         courseId: courseId,
         studyType: "ALL",
       })
-      setFlashCards(result?.data?.result?.flashcards || [])
-      console.log("Flashcard", result?.data?.result?.flashcards)
+
+      console.log("Raw Flashcard API response:", result.data)
+
+      // Handle different possible response structures (similar to Quiz and QA pages)
+      let flashcardData = []
+
+      if (Array.isArray(result?.data?.result?.flashcards)) {
+        flashcardData = result.data.result.flashcards
+      } else if (typeof result?.data?.result?.flashcards === "string") {
+        // If the data is a JSON string, parse it
+        try {
+          const parsedData = JSON.parse(result.data.result.flashcards)
+          flashcardData = Array.isArray(parsedData) ? parsedData : []
+        } catch (e) {
+          console.error("Failed to parse flashcard data:", e)
+        }
+      } else if (result?.data?.result?.flashcards && typeof result.data.result.flashcards === "object") {
+        // If it's an object, try to extract array from it
+        if (Array.isArray(result.data.result.flashcards.content)) {
+          flashcardData = result.data.result.flashcards.content
+        } else {
+          flashcardData = [result.data.result.flashcards]
+        }
+      }
+
+      console.log("Processed Flashcard Data:", flashcardData)
+      setFlashCards(flashcardData)
     } catch (error) {
       console.error("Error fetching flashcards:", error)
     } finally {

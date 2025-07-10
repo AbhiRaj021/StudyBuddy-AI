@@ -1,0 +1,13 @@
+{
+  "functions": {
+    "app/api/inngest/route.js": {
+      "maxDuration": 60
+    },
+    "app/api/study-type-content/route.jsx": {
+      "maxDuration": 30
+    }
+  },
+  "env": {
+    "NODE_ENV": "production"
+  }
+}
