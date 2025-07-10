@@ -47,7 +47,7 @@ export const courseOutlineAIModel = model.startChat({
 
 
 export const generateNotesAiModel = model.startChat({
-  generationConfig,
+  generationConfig2,
   history: [
     {
       role: "user",
