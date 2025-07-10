@@ -130,9 +130,33 @@ const QuestionAnswer = () => {
         studyType: "ALL",
       })
 
-      setQuestionAnswer(result?.data?.result?.qa || [])
-      setQa(result.data.result.qa || [])
-      console.log("Question Answer Data:", result)
+      console.log("Raw QA API response:", result.data)
+
+      // Handle different possible response structures (similar to Quiz page)
+      let qaData = []
+
+      if (Array.isArray(result?.data?.result?.qa)) {
+        qaData = result.data.result.qa
+      } else if (typeof result?.data?.result?.qa === "string") {
+        // If the data is a JSON string, parse it
+        try {
+          const parsedData = JSON.parse(result.data.result.qa)
+          qaData = Array.isArray(parsedData) ? parsedData : []
+        } catch (e) {
+          console.error("Failed to parse QA data:", e)
+        }
+      } else if (result?.data?.result?.qa && typeof result.data.result.qa === "object") {
+        // If it's an object, try to extract array from it
+        if (Array.isArray(result.data.result.qa.content)) {
+          qaData = result.data.result.qa.content
+        } else {
+          qaData = [result.data.result.qa]
+        }
+      }
+
+      console.log("Processed QA Data:", qaData)
+      setQuestionAnswer(qaData)
+      setQa(qaData)
     } catch (error) {
       console.error("Error fetching Q&A:", error)
     } finally {
