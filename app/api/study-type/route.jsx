@@ -29,7 +29,6 @@ export async function POST(req) {
     });
   }
   else if (studyType === 'notes') {
-    // 🔥 FIXED: Check for the correct type 'notes' (lowercase)
     const notesFromContent = await db.select().from(STUDY_TYPE_CONTENT_TABLE)
       .where(and(eq(STUDY_TYPE_CONTENT_TABLE?.courseId, courseId),
         eq(STUDY_TYPE_CONTENT_TABLE?.type, 'notes')));
@@ -38,14 +37,12 @@ export async function POST(req) {
       return NextResponse.json({ notes: notesFromContent[0].content });
     }
 
-    // Fallback to legacy chapter notes
     const notes = await db.select().from(CHAPTER_NOTES_TABLE)
       .where(eq(CHAPTER_NOTES_TABLE?.courseId, courseId));
 
     return NextResponse.json({ notes });
   }
   else {
-    // Handle other study types (flashcards, quiz, qa)
     const result = await db.select().from(STUDY_TYPE_CONTENT_TABLE)
       .where(and(eq(STUDY_TYPE_CONTENT_TABLE?.courseId, courseId),
         eq(STUDY_TYPE_CONTENT_TABLE?.type, studyType)));

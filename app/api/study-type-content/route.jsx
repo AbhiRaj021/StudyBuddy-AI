@@ -103,10 +103,10 @@ function mapStudyTypeForInngest(frontendType) {
 
 function mapStudyTypeForDatabase(frontendType) {
     const typeMapping = {
-        'notes': 'Notes/Chapters',
-        'flashcards': 'Flashcard',
-        'quiz': 'Quiz',
-        'qa': 'QA',
+        'notes': 'notes',        // Changed from 'Notes/Chapters' to 'notes'
+        'flashcards': 'flashcards',  // Changed from 'Flashcard' to 'flashcards'
+        'quiz': 'quiz',          // Changed from 'Quiz' to 'quiz'
+        'qa': 'qa',
     };
     return typeMapping[frontendType] || frontendType;
 }
