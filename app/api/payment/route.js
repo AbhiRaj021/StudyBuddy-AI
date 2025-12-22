@@ -1,7 +1,4 @@
-import { db } from "@/configs/db";
-import { STUDY_MATERIAL_TABLE } from "@/configs/schema";
-import { razorpay } from "@/lib/razorpay";
-import { eq } from "drizzle-orm";
+import { razorpay } from "@/lib/razorpay"; 
 import { NextResponse } from "next/server";
 
 export async function POST(req) {

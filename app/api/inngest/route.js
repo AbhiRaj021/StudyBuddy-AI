@@ -1,18 +1,14 @@
 import { serve } from "inngest/next";
 import { inngest } from "../../../inngest/client";
 import { CreateNewUser, GenerateNotes, GenerateStudyTypeContent, helloWorld } from "@/inngest/functions";
-// export const runtime = "edge";
-// Create an API that serves zero functions
 export const { GET, POST, PUT } = serve({
   client: inngest,
   functions: [
-    /* your functions will be passed here later! */
     helloWorld,
     CreateNewUser,
     GenerateNotes,
     GenerateStudyTypeContent,
   ],
- // 🔥 Add error handling
   onError: (error) => {
     console.error("Inngest serve error:", error);
     return new Response(JSON.stringify({ error: error.message }), {
@@ -21,7 +17,6 @@ export const { GET, POST, PUT } = serve({
     });
   },
   
-  // 🔥 Add environment-based configuration
   ...(process.env.NODE_ENV === 'production' && {
     landingPage: false,
     logLevel: "error"
@@ -33,6 +28,6 @@ export const { GET, POST, PUT } = serve({
   })
 });
 
-// 🔥 Configure runtime for Vercel
+
 export const runtime = "nodejs";
-export const maxDuration = 60; // Reduce to 60 seconds for registration
+export const maxDuration = 60;

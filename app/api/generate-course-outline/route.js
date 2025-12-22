@@ -9,9 +9,8 @@ export async function POST(req) {
     const body = await req.json();
     const { courseId, courseType, topic, difficultyLevel, createdBy } = body;
 
-    // 🛑 Validate request data
     if (!courseId || !topic || !courseType || !difficultyLevel || !createdBy) {
-      console.error("❌ Missing fields:", body);
+      console.error("`Missing fields:", body);
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
@@ -76,7 +75,7 @@ export async function POST(req) {
 
       return NextResponse.json({ result: dbResult[0] });
 
-      
+
     } catch (aiError) {
       console.error("🔥 AI Service Error:", aiError.message);
       return NextResponse.json(
