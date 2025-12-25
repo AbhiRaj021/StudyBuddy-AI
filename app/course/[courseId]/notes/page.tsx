@@ -94,7 +94,7 @@ import {
 
 function ViewNotes() {
   const { courseId } = useParams()
-  const [notes, setNotes] = useState()
+  const [notes, setNotes] = useState<any[]>()
   const [stepCount, setStepCount] = useState(0)
   const [loading, setLoading] = useState(true)
   const route = useRouter()
@@ -105,56 +105,56 @@ function ViewNotes() {
 
   // Replace the GetNotes function with this robust parsing logic
 
-const GetNotes = async () => {
-  setLoading(true)
-  try {
-    const result = await axios.post("/api/study-type", {
-      courseId: courseId,
-      studyType: "notes",
-    })
+  const GetNotes = async () => {
+    setLoading(true)
+    try {
+      const result = await axios.post("/api/study-type", {
+        courseId: courseId,
+        studyType: "notes",
+      })
 
-    console.log("Raw Notes API response:", result.data)
+      console.log("Raw Notes API response:", result.data)
 
-    // Handle different possible response structures (similar to QA and FlashCards pages)
-    let notesData = []
+      // Handle different possible response structures (similar to QA and FlashCards pages)
+      let notesData = []
 
-    if (Array.isArray(result?.data?.notes)) {
-      notesData = result.data.notes
-    } else if (typeof result?.data?.notes === "string") {
-      // If the data is a JSON string, parse it
-      try {
-        const parsedData = JSON.parse(result.data.notes)
-        notesData = Array.isArray(parsedData) ? parsedData : []
-      } catch (e) {
-        console.error("Failed to parse notes data:", e)
-        // If parsing fails, treat as plain text and wrap in object
-        notesData = [{ notes: result.data.notes }]
-      }
-    } else if (result?.data?.notes && typeof result.data.notes === "object") {
-      // If it's an object, try to extract array from it
-      if (Array.isArray(result.data.notes.content)) {
-        notesData = result.data.notes.content
-      } else {
-        notesData = [result.data.notes]
-      }
-    }
-
-    // Handle case where notes might be from CHAPTER_NOTES_TABLE (legacy structure)
-    if (notesData.length === 0 && result?.data?.notes) {
-      // Try to handle legacy chapter notes structure
-      if (Array.isArray(result.data.notes)) {
+      if (Array.isArray(result?.data?.notes)) {
         notesData = result.data.notes
+      } else if (typeof result?.data?.notes === "string") {
+        // If the data is a JSON string, parse it
+        try {
+          const parsedData = JSON.parse(result.data.notes)
+          notesData = Array.isArray(parsedData) ? parsedData : []
+        } catch (e) {
+          console.error("Failed to parse notes data:", e)
+          // If parsing fails, treat as plain text and wrap in object
+          notesData = [{ notes: result.data.notes }]
+        }
+      } else if (result?.data?.notes && typeof result.data.notes === "object") {
+        // If it's an object, try to extract array from it
+        if (Array.isArray(result.data.notes.content)) {
+          notesData = result.data.notes.content
+        } else {
+          notesData = [result.data.notes]
+        }
       }
-    }
 
-    console.log("Processed Notes Data:", notesData)
-    setNotes(notesData)
-  } catch (error) {
-    console.error("Error fetching notes:", error)
-  } finally {
-    setLoading(false)
+      // Handle case where notes might be from CHAPTER_NOTES_TABLE (legacy structure)
+      if (notesData.length === 0 && result?.data?.notes) {
+        // Try to handle legacy chapter notes structure
+        if (Array.isArray(result.data.notes)) {
+          notesData = result.data.notes
+        }
+      }
+
+      console.log("Processed Notes Data:", notesData)
+      setNotes(notesData)
+    } catch (error) {
+      console.error("Error fetching notes:", error)
+    } finally {
+      setLoading(false)
+    }
   }
-}
 
   function formatText(text) {
     // Replace newlines and multiple blank lines with HTML breaks or paragraphs
@@ -280,13 +280,12 @@ const GetNotes = async () => {
                         style={{ left: `${(index / (totalNotes - 1)) * 100}%` }}
                       >
                         <div
-                          className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
-                            index < stepCount
+                          className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${index < stepCount
                               ? "bg-gradient-to-br from-blue-500 to-purple-500 border-blue-500 shadow-lg"
                               : index === stepCount
                                 ? "bg-white border-blue-500 shadow-md"
                                 : "bg-white border-gray-300"
-                          }`}
+                            }`}
                         >
                           {index < stepCount ? (
                             <CheckCircle className="w-2 h-2 text-white" />

@@ -85,8 +85,8 @@ const PaymentPage = () => {
           },
         }
 
-        if (typeof window !== "undefined" && typeof window.Razorpay !== "undefined") {
-          const rzp = new window.Razorpay(options)
+        if (typeof window !== "undefined" && typeof (window as any).Razorpay !== "undefined") {
+          const rzp = new (window as any).Razorpay(options)
           rzp.open()
         } else {
           alert("Razorpay SDK failed to load.")

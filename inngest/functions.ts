@@ -105,7 +105,7 @@ export const GenerateNotes = inngest.createFunction(
             chapterId: index,
             courseId: course?.courseId,
             notes: aiResp,
-          });
+          } as any);
           index++;
         } catch (error) {
           console.error(`Error generating notes for chapter ${index}:`, error);
@@ -122,7 +122,7 @@ export const GenerateNotes = inngest.createFunction(
           .update(STUDY_MATERIAL_TABLE)
           .set({
             status: "Ready",
-          })
+          } as any)
           .where(eq(STUDY_MATERIAL_TABLE.courseId, course?.courseId));
         return { status: "Success", message: "Notes generation completed" };
       }
@@ -225,10 +225,10 @@ export const GenerateStudyTypeContent = inngest.createFunction(
       async () => {
         try {
           let result;
-          
+
           console.log(`📝 Generating ${studyType} content...`);
-          
-          if(studyType === "Notes") {
+
+          if (studyType === "Notes") {
             result = await generateNotesAiModel.sendMessage(prompt);
           } else if (studyType === "Flashcard") {
             result = await GenerateStudyTypeContentAiModel.sendMessage(prompt);
@@ -244,21 +244,21 @@ export const GenerateStudyTypeContent = inngest.createFunction(
           const rawText = result.response.text();
           console.log("🤖 Raw AI Response length:", rawText.length);
           console.log("🤖 Raw AI Response preview:", rawText.substring(0, 200));
-          
+
           // Clean up potential markdown formatting
           let cleanedText = rawText.replace(/```(json)?/g, "").trim();
-          
+
           try {
             const parsed = JSON.parse(cleanedText);
             console.log("✅ Successfully parsed AI response");
             console.log("📊 Parsed content type:", typeof parsed);
             console.log("📊 Parsed content preview:", Array.isArray(parsed) ? `Array with ${parsed.length} items` : Object.keys(parsed).slice(0, 3));
-            
+
             return parsed;
           } catch (parseError) {
             console.error("❌ JSON Parse Error:", parseError.message);
             console.error("❌ Failed text:", cleanedText.substring(0, 500));
-            
+
             // Fallback: try to extract JSON from text
             const jsonMatch = cleanedText.match(/\{[\s\S]*\}/);
             if (jsonMatch) {
@@ -270,7 +270,7 @@ export const GenerateStudyTypeContent = inngest.createFunction(
                 console.error("❌ Fallback parse also failed:", fallbackError.message);
               }
             }
-            
+
             // Last resort: return as string wrapped in array
             console.log("⚠️ Using last resort: wrapping in array");
             return [{ content: rawText, error: "Could not parse as JSON" }];
@@ -289,13 +289,13 @@ export const GenerateStudyTypeContent = inngest.createFunction(
         console.log("💾 Record ID:", recordId);
         console.log("💾 Content type:", typeof AIResult);
         console.log("💾 Content preview:", Array.isArray(AIResult) ? `Array with ${AIResult.length} items` : Object.keys(AIResult).slice(0, 3));
-        
+
         const result = await db
           .update(STUDY_TYPE_CONTENT_TABLE)
           .set({
             content: AIResult,
             status: "Ready",
-          })
+          } as any)
           .where(eq(STUDY_TYPE_CONTENT_TABLE.id, recordId));
 
         console.log("✅ Database update completed");

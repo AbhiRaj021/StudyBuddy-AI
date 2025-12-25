@@ -22,9 +22,9 @@ import { Button } from "@/components/ui/button"
 
 function FlashCards() {
   const { courseId } = useParams()
-  const [flashCards, setFlashCards] = useState([])
-  const [isFlipped, setIsFlipped] = useState()
-  const [api, setApi] = useState()
+  const [flashCards, setFlashCards] = useState<any[]>([])
+  const [isFlipped, setIsFlipped] = useState(false)
+  const [api, setApi] = useState<any>()
   const [current, setCurrent] = useState(0)
   const [loading, setLoading] = useState(true)
 
@@ -290,9 +290,8 @@ function FlashCards() {
                       {flashCards.slice(0, 5).map((_, index) => (
                         <div
                           key={index}
-                          className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                            index === current ? "bg-gradient-to-r from-purple-500 to-blue-500 w-6" : "bg-gray-300"
-                          }`}
+                          className={`w-2 h-2 rounded-full transition-all duration-300 ${index === current ? "bg-gradient-to-r from-purple-500 to-blue-500 w-6" : "bg-gray-300"
+                            }`}
                         ></div>
                       ))}
                       {flashCards.length > 5 && (

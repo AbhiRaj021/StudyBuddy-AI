@@ -42,5 +42,5 @@ export const PAYMENT_RECORD_TABLE = pgTable("paymentRecord", {
   amount: integer().notNull(),
   razorpayPaymentId: varchar().notNull(),
   razorpayOrderId: varchar().notNull(),
-  createdAt: integer().default(() => Date.now()),
+  createdAt: integer().$defaultFn(() => Date.now()),
 })

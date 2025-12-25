@@ -11,7 +11,7 @@
 //         'quiz': 'Quiz',              // Quiz → Quiz
 //         'qa': 'QA',                  // QA → QA
 //     };
-    
+
 //     return typeMapping[frontendType] || frontendType;
 // }
 
@@ -23,7 +23,7 @@
 //         'quiz': 'Quiz',             // Frontend quiz → Database Quiz
 //         'qa': 'QA',                 // Frontend qa → Database QA
 //     };
-    
+
 //     return typeMapping[frontendType] || frontendType;
 // }
 
@@ -84,10 +84,10 @@ import { NextResponse } from "next/server";
 
 // 🔥 Import AI models for direct generation
 import {
-  generateNotesAiModel,
-  GenerateStudyTypeContentAiModel,
-  GenerateQuizAiModel,
-  GenerateQuestionAnswerAiModel,
+    generateNotesAiModel,
+    GenerateStudyTypeContentAiModel,
+    GenerateQuizAiModel,
+    GenerateQuestionAnswerAiModel,
 } from "@/configs/AiModel";
 
 // Type mapping functions (keep existing)
@@ -119,14 +119,14 @@ export async function POST(req) {
         const databaseType = mapStudyTypeForDatabase(type);
 
         let PROMPT = "";
-        if(inngestType === "Notes"){
+        if (inngestType === "Notes") {
             PROMPT = "Generate detailed notes on topic: " + chapters + " in JSON format with comprehensive content, Maximum 15";
         }
-        else if(inngestType === "Flashcard"){
+        else if (inngestType === "Flashcard") {
             PROMPT = "Generate the flashcard on topic: " + chapters + " in JSON format with front back content, Maximum 15";
-        } else if(inngestType === "Quiz"){
+        } else if (inngestType === "Quiz") {
             PROMPT = "Generate Quiz on topic : " + chapters + " with Question and Options along with correct answer in JSON format, (Max 10)";
-        } else if(inngestType === "QA"){
+        } else if (inngestType === "QA") {
             PROMPT = "Generate Question Answer on topic: " + chapters + " in JSON format with question answer content, Maximum 10";
         }
 
@@ -137,14 +137,14 @@ export async function POST(req) {
             courseId: courseId,
             type: databaseType,
             status: "Generating...",
-        }).returning({id: STUDY_TYPE_CONTENT_TABLE.id});
+        } as any).returning({ id: STUDY_TYPE_CONTENT_TABLE.id });
 
         // 🔥 BYPASS INNGEST: Generate content directly
         try {
             console.log("📝 Generating content directly...");
-            
+
             let aiResult;
-            if(inngestType === "Notes") {
+            if (inngestType === "Notes") {
                 aiResult = await generateNotesAiModel.sendMessage(PROMPT);
             } else if (inngestType === "Flashcard") {
                 aiResult = await GenerateStudyTypeContentAiModel.sendMessage(PROMPT);
@@ -157,16 +157,16 @@ export async function POST(req) {
             // Parse AI response with robust error handling
             const rawText = aiResult.response.text();
             console.log("🤖 Raw AI response length:", rawText.length);
-            
+
             let cleanedText = rawText.replace(/```(json)?/g, "").trim();
-            
+
             let parsedContent;
             try {
                 parsedContent = JSON.parse(cleanedText);
                 console.log("✅ Successfully parsed AI response");
             } catch (parseError) {
                 console.log("⚠️ Initial parse failed, trying fallback...");
-                
+
                 // Fallback: try to extract JSON from text
                 const jsonMatch = cleanedText.match(/\{[\s\S]*\}/);
                 if (jsonMatch) {
@@ -189,42 +189,42 @@ export async function POST(req) {
                 .set({
                     content: parsedContent,
                     status: "Ready",
-                })
+                } as any)
                 .where(eq(STUDY_TYPE_CONTENT_TABLE.id, result[0].id));
 
             console.log("✅ Content saved to database successfully");
-            
-            return NextResponse.json({ 
-                success: true, 
+
+            return NextResponse.json({
+                success: true,
                 id: result[0].id,
                 message: "Content generated successfully",
-                contentPreview: Array.isArray(parsedContent) ? 
-                    `Generated ${parsedContent.length} items` : 
+                contentPreview: Array.isArray(parsedContent) ?
+                    `Generated ${parsedContent.length} items` :
                     "Content generated"
             });
 
         } catch (generationError) {
             console.error("❌ Content generation error:", generationError);
-            
+
             // Update status to failed
             await db.update(STUDY_TYPE_CONTENT_TABLE)
-                .set({ 
+                .set({
                     status: "Failed",
                     content: { error: generationError.message }
-                })
+                } as any)
                 .where(eq(STUDY_TYPE_CONTENT_TABLE.id, result[0].id));
-            
-            return NextResponse.json({ 
-                error: "Failed to generate content", 
-                details: generationError.message 
+
+            return NextResponse.json({
+                error: "Failed to generate content",
+                details: generationError.message
             }, { status: 500 });
         }
 
     } catch (error) {
         console.error("❌ API route error:", error);
-        return NextResponse.json({ 
-            error: "Internal server error", 
-            details: error.message 
+        return NextResponse.json({
+            error: "Internal server error",
+            details: error.message
         }, { status: 500 });
     }
 }

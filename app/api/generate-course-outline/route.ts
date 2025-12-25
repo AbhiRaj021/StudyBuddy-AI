@@ -54,8 +54,8 @@ export async function POST(req) {
           createdBy: createdBy,
           topic: topic,
           courseLayout: parsedContent,
-        })
-        .returning({ resp: STUDY_MATERIAL_TABLE });
+        } as any)
+        .returning();
 
       console.log("✅ DB Inserted successfully");
 
@@ -64,7 +64,7 @@ export async function POST(req) {
         const result = await inngest.send({
           name: "notes.generate",
           data: {
-            course: dbResult[0].resp, // Use the first result
+            course: dbResult[0], // Use the first result
           },
         });
         console.log("Inngest event sent");

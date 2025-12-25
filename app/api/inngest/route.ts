@@ -9,19 +9,13 @@ export const { GET, POST, PUT } = serve({
     GenerateNotes,
     GenerateStudyTypeContent,
   ],
-  onError: (error) => {
-    console.error("Inngest serve error:", error);
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" }
-    });
-  },
-  
+
+
   ...(process.env.NODE_ENV === 'production' && {
     landingPage: false,
     logLevel: "error"
   }),
-  
+
   ...(process.env.NODE_ENV === 'development' && {
     landingPage: true,
     logLevel: "debug"

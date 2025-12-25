@@ -97,11 +97,11 @@ import {
 
 const QuestionAnswer = () => {
   const { courseId } = useParams()
-  const [questionAnswer, setQuestionAnswer] = useState()
+  const [questionAnswer, setQuestionAnswer] = useState<any[]>()
   const [stepCount, setStepCount] = useState(0)
   const [qa, setQa] = useState([])
-  const [isFlipped, setIsFlipped] = useState()
-  const [api, setApi] = useState()
+  const [isFlipped, setIsFlipped] = useState(false)
+  const [api, setApi] = useState<any>()
   const [currentIndex, setCurrentIndex] = useState(0)
   const [viewedCards, setViewedCards] = useState(new Set())
   const [loading, setLoading] = useState(true)

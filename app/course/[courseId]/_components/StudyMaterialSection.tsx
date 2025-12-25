@@ -5,7 +5,7 @@ import axios from "axios"
 import { BookOpen, Sparkles, RefreshCw, AlertCircle } from "lucide-react"
 
 function StudyMaterialSection({ courseId, course }) {
-  const [studyTypeContent, setStudyTypeContent] = useState()
+  const [studyTypeContent, setStudyTypeContent] = useState<any>()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
